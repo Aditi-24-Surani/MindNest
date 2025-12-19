@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:paddingTop="@dimen/_50sdp">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/taskCard"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_16sdp"
+        app:cardElevation="@dimen/_4sdp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        app:shapeAppearanceOverlay="@style/CardTopRoundedOverlay">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/_32sdp"
+            android:paddingStart="@dimen/_20sdp"
+            android:paddingEnd="@dimen/_20sdp"
+            android:paddingBottom="@dimen/_20sdp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/add_new_task"
+                android:textSize="@dimen/_18ssp"
+                android:textStyle="bold"
+                android:layout_gravity="left"
+                android:paddingBottom="@dimen/_5sdp"/>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/task_des"
+                android:layout_marginBottom="@dimen/_15sdp"/>
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/edtTaskTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text"
+                android:hint="Enter task"
+                android:textColor="@color/lavender_light"
+                android:padding="@dimen/_12sdp"
+                android:textColorHint="@color/lavender_light"
+                android:textSize="@dimen/_16ssp"
+                android:layout_marginBottom="@dimen/_40sdp"/>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <ImageView
+        android:id="@+id/btnSaveTask"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:src="@drawable/baseline_check_24"
+        android:background="@drawable/btn_save_background"
+        android:scaleType="center"
+        android:enabled="false"
+        android:translationZ="12dp"
+        android:scaleY="1.4"
+        android:scaleX="1.4"
+        app:layout_constraintTop_toTopOf="@id/taskCard"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:translationY="@dimen/_minus28sdp"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

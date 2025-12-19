@@ -32,4 +32,8 @@
     <string name="info5">The Sleep Tracking Module allows users to record their daily sleep hours and quality. It helps improve rest patterns by giving insight into how well and how long they are sleeping each night.</string>
     <string name="info6">The Workout Module allows users to log their daily exercise with customizable options for workout type, duration, and intensity. It helps users stay active and maintain physical wellness by keeping all their workout records organized in one place.</string>
     <string name="skip">Skip</string>
+    <string name="no_task_desc">Add your tasks to stay organized and focused throughout the day. Writing them down helps you plan better, stay productive, and move through your day with clarity.</string>
+    <string name="add_task">Add your tasks</string>
+    <string name="task_des">Small steps toward a calmer day</string>
+    <string name="add_new_task">Add New Task</string>
 </resources>

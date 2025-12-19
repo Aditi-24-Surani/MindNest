@@ -1,0 +1,39 @@
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/_10sdp"
+    android:layout_marginBottom="@dimen/_12sdp"
+    app:cardCornerRadius="@dimen/_16sdp"
+    app:cardElevation="@dimen/_4sdp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/_16sdp"
+        android:gravity="center_vertical">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txtTaskTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="@dimen/_16ssp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
+            android:hint="@string/add_task"
+            android:background="@null"/>
+
+        <ImageButton
+            android:id="@+id/btnEditTask"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/edit_square_24px"
+            app:tint="@color/lavender_dark"/>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

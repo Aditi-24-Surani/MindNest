@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.view.GravityCompat
+import androidx.fragment.app.Fragment
 import com.example.mindnest.databinding.ActivityDashboardBinding
 
 class DashboardActivity : AppCompatActivity() {
@@ -39,45 +40,61 @@ class DashboardActivity : AppCompatActivity() {
         setupNavigationMenu()
         setupLogout()
 
+        if (savedInstanceState == null) {
+            binding.navigationView.setCheckedItem(R.id.nav_overview)
+            binding.toolbar.title = "Overview"
+        }
+
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
                     binding.drawerLayout.closeDrawer(GravityCompat.START)
                 } else {
-                    AlertDialog.Builder(this@DashboardActivity)
-                        .setTitle("Exit App")
-                        .setMessage("Are you sure you want to exit?")
-                        .setPositiveButton("OK") { _, _ ->
-                            finishAffinity()
-                        }
-                        .setNegativeButton("Cancel", null)
-                        .show()
+                    finishAffinity()
                 }
             }
         })
-
     }
 
     private fun setupNavigationMenu() {
         binding.navigationView.setNavigationItemSelectedListener { item ->
-            binding.drawerLayout.closeDrawer(GravityCompat.START)
 
-            binding.toolbar.title = when (item.itemId) {
-                R.id.nav_overview -> "Overview"
-                R.id.nav_tasks -> "Tasks"
-                R.id.nav_meditation -> "Meditation"
-                R.id.nav_journal -> "Journal & Mood"
-                R.id.nav_water -> "Water"
-                R.id.nav_sleep -> "Sleep"
-                R.id.nav_workout -> "Workout"
-                else -> "MindNest"
+            when (item.itemId) {
+                R.id.nav_tasks -> {
+                    loadFragment(FragmentTask())
+                    binding.toolbar.title = item.title
+                    item.isChecked = true
+                }
+                else -> {
+                    clearFragment()
+                    binding.toolbar.title = item.title
+                    item.isChecked = true
+                }
             }
+
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
     }
 
+    private fun clearFragment() {
+        val fragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+        fragment?.let {
+            supportFragmentManager.beginTransaction()
+                .remove(it)
+                .commit()
+        }
+    }
+
+    private fun loadFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, fragment)
+            .commit()
+    }
+
     private fun setupLogout() {
-        val logoutBtn = binding.navigationView.findViewById<AppCompatButton>(R.id.btnLogout)
+        val logoutBtn =
+            binding.navigationView.findViewById<AppCompatButton>(R.id.btnLogout)
 
         logoutBtn.setOnClickListener {
             AlertDialog.Builder(this)
@@ -86,7 +103,8 @@ class DashboardActivity : AppCompatActivity() {
                 .setCancelable(false)
                 .setPositiveButton("Yes") { _, _ ->
                     val intent = Intent(this, LogInActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    intent.flags =
+                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
                     finish()
                 }
@@ -96,5 +114,4 @@ class DashboardActivity : AppCompatActivity() {
                 .show()
         }
     }
-
 }
