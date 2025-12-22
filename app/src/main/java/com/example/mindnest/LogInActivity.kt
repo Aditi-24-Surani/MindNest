@@ -139,7 +139,7 @@ class LogInActivity : AppCompatActivity() {
             }
 
             else -> {
-                startActivity(Intent(this, ViewPager::class.java))
+                startActivity(Intent(this, DashboardActivity::class.java))
                 finish()
             }
         }

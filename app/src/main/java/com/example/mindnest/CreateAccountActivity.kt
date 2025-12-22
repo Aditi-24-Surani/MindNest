@@ -144,7 +144,7 @@ class CreateAccountActivity : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
 
-                startActivity(Intent(this, DashboardActivity::class.java))
+                startActivity(Intent(this, ViewPager::class.java))
                 finish()
             }
         }
