@@ -36,4 +36,5 @@
     <string name="add_task">Add your tasks</string>
     <string name="task_des">Small steps toward a calmer day</string>
     <string name="add_new_task">Add New Task</string>
+    <string name="past_sessions">Monthly past sessions</string>
 </resources>

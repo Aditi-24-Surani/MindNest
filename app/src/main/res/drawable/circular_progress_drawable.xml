@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item>
+        <shape
+            android:shape="ring"
+            android:thickness="@dimen/_25sdp"
+            android:useLevel="false">
+            <solid android:color="@color/lavender_light"/>
+        </shape>
+    </item>
+
+    <item>
+        <shape
+            android:shape="ring"
+            android:thickness="@dimen/_25sdp"
+            android:useLevel="true">
+            <solid android:color="@color/lavender_dark"/>
+            <corners android:radius="@dimen/_100sdp"/>
+        </shape>
+    </item>
+
+</layer-list>

@@ -11,6 +11,9 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.example.mindnest.databinding.ActivityDashboardBinding
+import com.example.mindnest.databinding.FragmentMindfulnessBinding
+import com.example.mindnest.ui.mindfulness.FragmentMindfulness
+
 
 class DashboardActivity : AppCompatActivity() {
 
@@ -62,6 +65,11 @@ class DashboardActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.nav_tasks -> {
                     loadFragment(FragmentTask())
+                    binding.toolbar.title = item.title
+                    item.isChecked = true
+                }
+                R.id.nav_meditation -> {
+                    loadFragment(FragmentMindfulness())
                     binding.toolbar.title = item.title
                     item.isChecked = true
                 }
