@@ -12,6 +12,7 @@ import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.example.mindnest.databinding.ActivityDashboardBinding
 import com.example.mindnest.databinding.FragmentMindfulnessBinding
+import com.example.mindnest.ui.journal.JournalMoodFragment
 import com.example.mindnest.ui.mindfulness.FragmentMindfulness
 
 
@@ -70,6 +71,11 @@ class DashboardActivity : AppCompatActivity() {
                 }
                 R.id.nav_meditation -> {
                     loadFragment(FragmentMindfulness())
+                    binding.toolbar.title = item.title
+                    item.isChecked = true
+                }
+                R.id.nav_journal -> {
+                    loadFragment(JournalMoodFragment())
                     binding.toolbar.title = item.title
                     item.isChecked = true
                 }

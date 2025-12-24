@@ -39,4 +39,6 @@
     <string name="past_sessions">Monthly past sessions</string>
     <string name="finish">Finish</string>
     <string name="save">Save</string>
+    <string name="Journal">Reflect your mood</string>
+    <string name="journal_info">Reflect your mood by taking a quiet moment to understand how you truly feel. Writing it down helps you connect with your emotions and notice your patterns over time.</string>
 </resources>
