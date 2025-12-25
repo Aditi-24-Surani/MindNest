@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.mindnest.R
 import com.example.mindnest.adapter.JournalAdapter
 import com.example.mindnest.adapter.MonthAdapter
 import com.example.mindnest.databinding.BottomSheetJournalBinding
@@ -107,7 +108,10 @@ class JournalMoodFragment : Fragment() {
     }
 
     private fun openBottomSheet(editEntry: JournalEntry? = null) {
-        val dialog = BottomSheetDialog(requireContext())
+        val dialog = BottomSheetDialog(
+            requireContext(),
+            R.style.TransparentBottomSheetDialog
+        )
         val sheetBinding = BottomSheetJournalBinding.inflate(layoutInflater)
         dialog.setContentView(sheetBinding.root)
 

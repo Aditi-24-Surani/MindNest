@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/_16sdp">
 
-            <!-- Title -->
+
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"

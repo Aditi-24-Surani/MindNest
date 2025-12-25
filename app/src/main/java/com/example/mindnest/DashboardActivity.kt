@@ -54,7 +54,14 @@ class DashboardActivity : AppCompatActivity() {
                 if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
                     binding.drawerLayout.closeDrawer(GravityCompat.START)
                 } else {
-                    finishAffinity()
+                    AlertDialog.Builder(this@DashboardActivity)
+                        .setTitle("Exit App")
+                        .setMessage("Are you sure you want to exit?")
+                        .setPositiveButton("OK") { _, _ ->
+                            finishAffinity()
+                        }
+                        .setNegativeButton("Cancel", null)
+                        .show()
                 }
             }
         })

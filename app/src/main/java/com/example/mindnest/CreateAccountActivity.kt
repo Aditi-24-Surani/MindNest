@@ -10,7 +10,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.ContextCompat
-import androidx.viewpager.widget.ViewPager
 import com.example.mindnest.databinding.ActivityCreateAccountBinding
 
 class CreateAccountActivity : AppCompatActivity() {
@@ -22,11 +21,45 @@ class CreateAccountActivity : AppCompatActivity() {
         binding = ActivityCreateAccountBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.SignInBtn.setOnClickListener {
-            handleSignUp()
+        binding.SignInBtn.setOnClickListener { handleSignUp() }
+        setLoginRedirectLink()
+        handleKeyboardScroll()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        resetErrors()
+    }
+
+    private fun setLoginRedirectLink() {
+        val text = "Already have an account? Log in"
+        val spannable = android.text.SpannableString(text)
+
+        val clickableSpan = object : android.text.style.ClickableSpan() {
+            override fun onClick(widget: View) {
+                startActivity(Intent(this@CreateAccountActivity, LogInActivity::class.java))
+                finish()
+            }
+
+            override fun updateDrawState(ds: android.text.TextPaint) {
+                ds.isUnderlineText = true
+                ds.color = ContextCompat.getColor(this@CreateAccountActivity, R.color.lavender_primary)
+            }
         }
 
-        setLoginRedirectLink()
+        spannable.setSpan(
+            clickableSpan,
+            text.indexOf("Log in"),
+            text.length,
+            android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        binding.loginRedirectTxt.text = spannable
+        binding.loginRedirectTxt.movementMethod =
+            android.text.method.LinkMovementMethod.getInstance()
+    }
+
+    private fun handleKeyboardScroll() {
         binding.root.viewTreeObserver.addOnGlobalLayoutListener {
             val rect = Rect()
             binding.root.getWindowVisibleDisplayFrame(rect)
@@ -39,38 +72,6 @@ class CreateAccountActivity : AppCompatActivity() {
         }
     }
 
-    private fun setLoginRedirectLink() {
-        val fullText = "Already have an account? Log in"
-        val spannable = android.text.SpannableString(fullText)
-
-        val start = fullText.indexOf("Log in")
-        val end = start + "Log in".length
-
-        val clickableSpan = object : android.text.style.ClickableSpan() {
-            override fun onClick(widget: View) {
-                startActivity(Intent(this@CreateAccountActivity, LogInActivity::class.java))
-                finish()
-            }
-
-            override fun updateDrawState(ds: android.text.TextPaint) {
-                super.updateDrawState(ds)
-                ds.isUnderlineText = true
-                ds.color = resources.getColor(R.color.lavender_primary)
-            }
-        }
-
-        spannable.setSpan(
-            clickableSpan,
-            start,
-            end,
-            android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-
-        binding.loginRedirectTxt.text = spannable
-        binding.loginRedirectTxt.movementMethod =
-            android.text.method.LinkMovementMethod.getInstance()
-    }
-
     private fun showError(
         editText: AppCompatEditText,
         errorTextView: TextView,
@@ -79,8 +80,12 @@ class CreateAccountActivity : AppCompatActivity() {
         editText.background =
             ContextCompat.getDrawable(this, R.drawable.edit_text_error)
 
-        editText.compoundDrawablesRelative[0]?.setTint(
+        val drawable = editText.compoundDrawablesRelative[0]?.mutate()
+        drawable?.setTint(
             ContextCompat.getColor(this, android.R.color.holo_red_dark)
+        )
+        editText.setCompoundDrawablesRelativeWithIntrinsicBounds(
+            drawable, null, null, null
         )
 
         errorTextView.text = message
@@ -92,16 +97,24 @@ class CreateAccountActivity : AppCompatActivity() {
         editText: AppCompatEditText,
         errorTextView: TextView
     ) {
-
         editText.background =
             ContextCompat.getDrawable(this, R.drawable.edit_text)
 
-
-        editText.compoundDrawablesRelative[0]?.setTint(
+        val drawable = editText.compoundDrawablesRelative[0]?.mutate()
+        drawable?.setTint(
             ContextCompat.getColor(this, R.color.lavender_primary)
+        )
+        editText.setCompoundDrawablesRelativeWithIntrinsicBounds(
+            drawable, null, null, null
         )
 
         errorTextView.visibility = View.GONE
+    }
+
+    private fun resetErrors() {
+        clearError(binding.name, binding.nameErrorTxt)
+        clearError(binding.email, binding.emailErrorTxt)
+        clearError(binding.edtPassword, binding.passwordErrorTxt)
     }
 
     private fun handleSignUp() {
@@ -109,43 +122,24 @@ class CreateAccountActivity : AppCompatActivity() {
         val email = binding.email.text.toString().trim()
         val password = binding.edtPassword.text.toString().trim()
 
-        clearError(binding.name, binding.nameErrorTxt)
-        clearError(binding.email, binding.emailErrorTxt)
-        clearError(binding.edtPassword, binding.passwordErrorTxt)
+        resetErrors()
 
         when {
-            name.isEmpty() -> {
+            name.isEmpty() ->
                 showError(binding.name, binding.nameErrorTxt, "Name is required")
-            }
 
-            email.isEmpty() -> {
-                showError(
-                    binding.email,
-                    binding.emailErrorTxt,
-                    "Please enter your Email Address"
-                )
-            }
+            email.isEmpty() ->
+                showError(binding.email, binding.emailErrorTxt, "Please enter your Email Address")
 
-            !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
+            !Patterns.EMAIL_ADDRESS.matcher(email).matches() ->
                 showError(binding.email, binding.emailErrorTxt, "Enter a valid email")
-            }
 
-            password.isEmpty() -> {
-                showError(
-                    binding.edtPassword,
-                    binding.passwordErrorTxt,
-                    "Password is required"
-                )
-            }
+            password.isEmpty() ->
+                showError(binding.edtPassword, binding.passwordErrorTxt, "Password is required")
 
             else -> {
-                Toast.makeText(
-                    this,
-                    "Account created successfully",
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                startActivity(Intent(this, com.example.mindnest.ViewPager::class.java))
+                Toast.makeText(this, "Account created successfully", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, ViewPager::class.java))
                 finish()
             }
         }

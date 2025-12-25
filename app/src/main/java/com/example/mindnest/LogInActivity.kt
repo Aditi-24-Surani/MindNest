@@ -10,13 +10,11 @@ import android.text.style.ClickableSpan
 import android.util.Patterns
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.ContextCompat
 import com.example.mindnest.databinding.ActivityLoginBinding
-import androidx.activity.OnBackPressedCallback
 
 class LogInActivity : AppCompatActivity() {
 
@@ -27,11 +25,49 @@ class LogInActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.loginBtn.setOnClickListener {
-            handleLogin()
+        binding.loginBtn.setOnClickListener { handleLogin() }
+        setSignUpLink()
+        handleKeyboardScroll()
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                finishAffinity()
+            }
+        })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        resetErrors()
+    }
+
+    private fun setSignUpLink() {
+        val text = "Don't have an account? Sign up"
+        val spannable = SpannableString(text)
+
+        val clickableSpan = object : ClickableSpan() {
+            override fun onClick(widget: View) {
+                startActivity(Intent(this@LogInActivity, CreateAccountActivity::class.java))
+            }
+
+            override fun updateDrawState(ds: android.text.TextPaint) {
+                ds.isUnderlineText = true
+                ds.color = ContextCompat.getColor(this@LogInActivity, R.color.lavender_primary)
+            }
         }
 
-        setSignUpLink()
+        spannable.setSpan(
+            clickableSpan,
+            text.indexOf("Sign up"),
+            text.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        binding.createAccountTxt.text = spannable
+        binding.createAccountTxt.movementMethod = LinkMovementMethod.getInstance()
+    }
+
+    private fun handleKeyboardScroll() {
         binding.root.viewTreeObserver.addOnGlobalLayoutListener {
             val rect = Rect()
             binding.root.getWindowVisibleDisplayFrame(rect)
@@ -42,39 +78,6 @@ class LogInActivity : AppCompatActivity() {
                 binding.rootScroll.scrollTo(0, binding.email.bottom)
             }
         }
-
-
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                finishAffinity()
-            }
-        })
-    }
-
-    private fun setSignUpLink() {
-        val fullText = "Don't have an account? Sign up"
-        val spannable = SpannableString(fullText)
-
-        val start = fullText.indexOf("Sign up")
-        val end = start + "Sign up".length
-
-        val clickableSpan = object : ClickableSpan() {
-            override fun onClick(widget: View) {
-                startActivity(
-                    Intent(this@LogInActivity, CreateAccountActivity::class.java)
-                )
-            }
-
-            override fun updateDrawState(ds: android.text.TextPaint) {
-                super.updateDrawState(ds)
-                ds.isUnderlineText = true
-                ds.color = resources.getColor(R.color.lavender_primary)
-            }
-        }
-
-        spannable.setSpan(clickableSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        binding.createAccountTxt.text = spannable
-        binding.createAccountTxt.movementMethod = LinkMovementMethod.getInstance()
     }
 
     private fun showError(
@@ -82,11 +85,16 @@ class LogInActivity : AppCompatActivity() {
         errorTextView: TextView,
         message: String
     ) {
-
         editText.background =
             ContextCompat.getDrawable(this, R.drawable.edit_text_error)
 
-        editText.compoundDrawablesRelative[0]?.setTint(ContextCompat.getColor(this, android.R.color.holo_red_dark))
+        val drawable = editText.compoundDrawablesRelative[0]?.mutate()
+        drawable?.setTint(
+            ContextCompat.getColor(this, android.R.color.holo_red_dark)
+        )
+        editText.setCompoundDrawablesRelativeWithIntrinsicBounds(
+            drawable, null, null, null
+        )
 
         errorTextView.text = message
         errorTextView.visibility = View.VISIBLE
@@ -97,46 +105,40 @@ class LogInActivity : AppCompatActivity() {
         editText: AppCompatEditText,
         errorTextView: TextView
     ) {
-
         editText.background =
             ContextCompat.getDrawable(this, R.drawable.edit_text)
 
-        editText.compoundDrawablesRelative[0]?.setTint(ContextCompat.getColor(this, R.color.lavender_primary))
+        val drawable = editText.compoundDrawablesRelative[0]?.mutate()
+        drawable?.setTint(
+            ContextCompat.getColor(this, R.color.lavender_primary)
+        )
+        editText.setCompoundDrawablesRelativeWithIntrinsicBounds(
+            drawable, null, null, null
+        )
 
         errorTextView.visibility = View.GONE
+    }
+
+    private fun resetErrors() {
+        clearError(binding.email, binding.emailErrorTxt)
+        clearError(binding.edtPassword, binding.passwordErrorTxt)
     }
 
     private fun handleLogin() {
         val email = binding.email.text.toString().trim()
         val password = binding.edtPassword.text.toString().trim()
 
-        clearError(binding.email, binding.emailErrorTxt)
-        clearError(binding.edtPassword, binding.passwordErrorTxt)
+        resetErrors()
 
         when {
-            email.isEmpty() -> {
-                showError(
-                    binding.email,
-                    binding.emailErrorTxt,
-                    "Please enter your Email Address"
-                )
-            }
+            email.isEmpty() ->
+                showError(binding.email, binding.emailErrorTxt, "Please enter your Email Address")
 
-            !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
-                showError(
-                    binding.email,
-                    binding.emailErrorTxt,
-                    "Enter a valid email"
-                )
-            }
+            !Patterns.EMAIL_ADDRESS.matcher(email).matches() ->
+                showError(binding.email, binding.emailErrorTxt, "Enter a valid email")
 
-            password.isEmpty() -> {
-                showError(
-                    binding.edtPassword,
-                    binding.passwordErrorTxt,
-                    "Password is required"
-                )
-            }
+            password.isEmpty() ->
+                showError(binding.edtPassword, binding.passwordErrorTxt, "Password is required")
 
             else -> {
                 startActivity(Intent(this, DashboardActivity::class.java))
@@ -144,5 +146,4 @@ class LogInActivity : AppCompatActivity() {
             }
         }
     }
-
 }
