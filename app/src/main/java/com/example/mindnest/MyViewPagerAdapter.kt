@@ -12,7 +12,8 @@ class MyViewPagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(acti
         JournalFragment(),
         SleepTrackingFragment(),
         WaterIntakeFragment(),
-        WorkoutFragment()
+        WorkoutFragment(),
+        PeriodFragment()
     )
 
     override fun getItemCount(): Int = fragments.size

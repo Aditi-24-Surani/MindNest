@@ -29,4 +29,8 @@
         android:title="@string/workout"
         android:icon="@drawable/exercise_24px"/>
 
+    <item android:id="@+id/navperiod"
+        android:title="@string/period"
+        android:icon="@drawable/menstrual_health_24px"/>
+
 </menu>

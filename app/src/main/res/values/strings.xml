@@ -43,5 +43,7 @@
     <string name="journal_info">Reflect your mood by taking a quiet moment to understand how you truly feel. Writing it down helps you connect with your emotions and notice your patterns over time.</string>
     <string name="mindfulness">Mindfulness</string>
     <string name="mindful_info">Take a few minutes each day for mindful breathing and gentle stillness. Even small moments of mindfulness can help reset your mind and bring calm to your day.</string>
+    <string name="period">Periods</string>
+    <string name="period_info">The Period Module allows users to track their menstrual cycle with customizable options for cycle dates, flow intensity, and symptoms. It helps users understand their cycle patterns, manage health better, and stay prepared by keeping all period-related records organized in one place.</string>
 
 </resources>
