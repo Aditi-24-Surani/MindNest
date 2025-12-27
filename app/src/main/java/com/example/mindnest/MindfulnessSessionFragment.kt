@@ -6,7 +6,6 @@ import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -53,10 +52,11 @@ class MindfulnessSessionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Hide toolbar
         activity?.findViewById<View>(R.id.toolbar)?.isVisible = false
 
+        // Back button handling
         binding.btnBack.setOnClickListener { navigateBack() }
-
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
@@ -73,6 +73,7 @@ class MindfulnessSessionFragment : Fragment() {
             }
         })
 
+        // Session duration
         val minutes = arguments?.getInt("SESSION_MINUTES") ?: 5
         totalMillis = minutes * 60 * 1000L
         millisRemaining = totalMillis
@@ -82,6 +83,7 @@ class MindfulnessSessionFragment : Fragment() {
         updateTimerText(millisRemaining)
         initAudio()
 
+        // Load saved sessions
         viewModel.loadSessions(requireContext())
         viewModel.pastSessions.observe(viewLifecycleOwner) { list ->
             adapter.submitList(list.toList())
@@ -168,13 +170,13 @@ class MindfulnessSessionFragment : Fragment() {
             startMillis = sessionStartTime
         )
 
-        viewModel.addSession(newSession)
-        viewModel.saveSessions(requireContext())
+        // Add session and save immediately
+        viewModel.addSession(newSession, requireContext())
+
         binding.rvPastSessions.post {
             binding.rvPastSessions.scrollToPosition(0)
         }
     }
-
 
     private fun updateTimerText(millis: Long) {
         val min = millis / 1000 / 60

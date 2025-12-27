@@ -15,10 +15,12 @@ class PastSessionViewModel : ViewModel() {
     private val PREFS_NAME = "mindful_sessions"
     private val KEY_SESSIONS = "sessions"
 
-    fun addSession(session: PastSession) {
+
+    fun addSession(session: PastSession, context: Context? = null) {
         val list = _pastSessions.value ?: mutableListOf()
-        list.add(0, session) // add newest at top
+        list.add(0, session)
         _pastSessions.value = list
+        context?.let { saveSessions(it) }
     }
 
     fun saveSessions(context: Context) {
@@ -31,7 +33,7 @@ class PastSessionViewModel : ViewModel() {
     fun loadSessions(context: Context) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val json = prefs.getString(KEY_SESSIONS, null)
-        if (json != null) {
+        if (!json.isNullOrEmpty()) {
             val gson = Gson()
             val type = object : TypeToken<MutableList<PastSession>>() {}.type
             val list: MutableList<PastSession> = gson.fromJson(json, type)
