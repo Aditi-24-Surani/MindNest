@@ -52,8 +52,10 @@ class MindfulnessSessionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Hide toolbar
         activity?.findViewById<View>(R.id.toolbar)?.isVisible = false
 
+        // Back button handling
         binding.btnBack.setOnClickListener { navigateBack() }
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
@@ -71,6 +73,7 @@ class MindfulnessSessionFragment : Fragment() {
             }
         })
 
+        // Session duration
         val minutes = arguments?.getInt("SESSION_MINUTES") ?: 5
         totalMillis = minutes * 60 * 1000L
         millisRemaining = totalMillis
@@ -80,6 +83,7 @@ class MindfulnessSessionFragment : Fragment() {
         updateTimerText(millisRemaining)
         initAudio()
 
+        // Load saved sessions
         viewModel.loadSessions(requireContext())
         viewModel.pastSessions.observe(viewLifecycleOwner) { list ->
             adapter.submitList(list.toList())
@@ -166,6 +170,7 @@ class MindfulnessSessionFragment : Fragment() {
             startMillis = sessionStartTime
         )
 
+        // Add session and save immediately
         viewModel.addSession(newSession, requireContext())
 
         binding.rvPastSessions.post {

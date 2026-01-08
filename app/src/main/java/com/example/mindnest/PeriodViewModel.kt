@@ -118,5 +118,4 @@ class PeriodViewModel(app: Application) : AndroidViewModel(app) {
             else -> "Normal"
         }
     }
-
 }
