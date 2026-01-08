@@ -10,41 +10,27 @@ class LogSleepAdapter(
     private val onItemClick: (Int) -> Unit
 ) : RecyclerView.Adapter<LogSleepAdapter.SleepViewHolder>() {
 
-    inner class SleepViewHolder(
-        private val binding: ItemLogSleepBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
-
+    inner class SleepViewHolder(private val binding: ItemLogSleepBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(logSleep: LogSleep) {
             binding.txtSleepDate.text = logSleep.date
-            binding.txtSleepTime.text =
-                "${logSleep.sleepTime} - ${logSleep.wakeTime}"
+            binding.txtSleepTime.text = "${logSleep.sleepTime} - ${logSleep.wakeTime}"
             binding.txtSleepDuration.text = logSleep.duration
 
             binding.root.setOnClickListener {
-                onItemClick(adapterPosition)
+                val pos = bindingAdapterPosition
+                if (pos != RecyclerView.NO_POSITION) onItemClick(pos)
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SleepViewHolder {
-        val binding = ItemLogSleepBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
-        )
+        val binding = ItemLogSleepBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return SleepViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: SleepViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: SleepViewHolder, position: Int) =
         holder.bind(sleepList[position])
-    }
 
     override fun getItemCount(): Int = sleepList.size
 }
-
-data class LogSleep(
-    val date: String,
-    val sleepTime: String,
-    val wakeTime: String,
-    val duration: String
-)

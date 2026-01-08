@@ -8,10 +8,10 @@
     android:background="@android:color/white">
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/txtNoItemTitle"
+        android:id="@+id/txtWorkoutTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/Journal"
+        android:text="@string/add_workout"
         android:textColor="@color/text_primary"
         android:textSize="@dimen/_22ssp"
         android:textStyle="bold"
@@ -20,38 +20,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvMonths"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_12sdp"
-        android:paddingStart="@dimen/_16sdp"
-        android:paddingEnd="@dimen/_16sdp"
-        android:overScrollMode="never"
-        android:orientation="horizontal"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@id/txtNoItemTitle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:listitem="@layout/item_month_chip"/>
-
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layoutEmpty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/layoutWorkoutEmpty"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginTop="@dimen/_20sdp"
         android:padding="@dimen/_20sdp"
         android:layout_marginBottom="@dimen/_80sdp"
-        app:layout_constraintTop_toBottomOf="@id/rvMonths"
-        app:layout_constraintBottom_toTopOf="@id/fabAddItem"
+        app:layout_constraintTop_toBottomOf="@id/txtWorkoutTitle"
+        app:layout_constraintBottom_toTopOf="@id/fabAddWorkout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/txtNoItemDesc"
+            android:id="@+id/txtWorkoutEmptyDesc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/journal_info"
+            android:layout_marginTop="48dp"
+            android:text="@string/no_workout_desc"
             android:textSize="@dimen/_14ssp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -59,36 +45,36 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/imgEmptyItem"
+            android:id="@+id/imgWorkoutEmpty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:maxHeight="@dimen/_300sdp"
             android:minHeight="@dimen/_160sdp"
-            android:paddingTop="@dimen/_40sdp"
             android:scaleType="fitCenter"
-            android:src="@drawable/journal"
+            android:src="@drawable/workout"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txtNoItemDesc"
-            app:layout_constraintVertical_bias="0.0" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toBottomOf="@id/txtWorkoutEmptyDesc"
+            app:layout_constraintVertical_bias="0.62" />
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/itemRecyclerView"
+        android:id="@+id/workoutRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:padding="@dimen/_16sdp"
         android:visibility="gone"
-        tools:listitem="@layout/item_journal_mood"
-        app:layout_constraintTop_toBottomOf="@id/rvMonths"
-        app:layout_constraintBottom_toTopOf="@id/fabAddItem"
+        tools:listitem="@layout/item_workout"
+        app:layout_constraintTop_toBottomOf="@id/txtWorkoutTitle"
+        app:layout_constraintBottom_toTopOf="@id/fabAddWorkout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAddItem"
+        android:id="@+id/fabAddWorkout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/_24sdp"
