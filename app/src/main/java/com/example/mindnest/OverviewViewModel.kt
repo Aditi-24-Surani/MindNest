@@ -90,7 +90,7 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
 
             startRealtimeSync()
             startObservingModules()
-            startObservingMindScore() // Start observing mind score flow
+            startObservingMindScore()
             refreshMeditation()
             refreshMindScore()
             startWeeklyObserver(userId)
@@ -102,8 +102,7 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
         if (preferenceManager.getUserId() > 0) {
             val localName = preferenceManager.getUserName()
             if (!localName.isNullOrEmpty()) {
-                _userName.postValue(localName)
-                return
+                _userName.postValue(localName!!)
             }
         }
 
@@ -193,9 +192,8 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
                 val today = todayDateString()
                 val targetMl = settings?.waterTargetMl ?: 2000
                 val todayMl = entries.filter { it.date == today }.sumOf { it.amountMl }
-                
-                // Recalculate score when water changes from cloud
-                refreshMindScore() 
+
+                refreshMindScore()
 
                 if (targetMl <= 0) return@combine "Set target"
                 "$todayMl / $targetMl ml"
@@ -556,9 +554,12 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
         }
 
         val totalMinutes = todaySessions.sumOf { session ->
-            session.duration
-                .replace("[^0-9]".toRegex(), "")
-                .toIntOrNull() ?: 0
+            val parts = session.duration.split(":")
+            if (parts.size == 2) {
+                val minutes = parts[0].toIntOrNull() ?: 0
+                val seconds = parts[1].toIntOrNull() ?: 0
+                minutes + (seconds / 60.0)
+            } else 0.0
         }
 
         return when {

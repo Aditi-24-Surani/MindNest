@@ -232,7 +232,7 @@ class OverviewFragment : Fragment() {
             .create()
 
         configureLineChart(dialogBinding.lineChartMindScore)
-        
+
         overviewViewModel.getLast7DaysMindScores().observe(viewLifecycleOwner) { scores ->
             updateChartData(dialogBinding.lineChartMindScore, scores)
         }
@@ -261,7 +261,7 @@ class OverviewFragment : Fragment() {
 
         val leftAxis = lineChart.axisLeft
         leftAxis.axisMinimum = 0f
-        leftAxis.axisMaximum = 100f
+        leftAxis.axisMaximum = 110f
         leftAxis.setDrawGridLines(true)
         leftAxis.textSize = 10f
 
@@ -419,7 +419,7 @@ class OverviewFragment : Fragment() {
         overviewViewModel.journalSummary.value?.let { moduleData["Journal & Mood"] = it }
         overviewViewModel.sleepSummary.value?.let { moduleData["Sleep"] = it }
         overviewViewModel.calorieSummary.value?.let { moduleData["Calories"] = it }
-        
+
         val preferenceManager = PreferenceManager(requireContext())
         if (preferenceManager.getUserGender()?.lowercase() == "female") {
             overviewViewModel.periodSummary.value?.let { moduleData["Period"] = it }
@@ -427,12 +427,12 @@ class OverviewFragment : Fragment() {
 
         lifecycleScope.launch {
             Toast.makeText(requireContext(), "Generating report...", Toast.LENGTH_SHORT).show()
-            
+
             // Create a hidden chart to capture as bitmap
             val chart = LineChart(requireContext())
             chart.layout(0, 0, 800, 400) // Fixed size for bitmap
             configureLineChart(chart)
-            
+
             // Fetch data synchronously for the report
             val scores = overviewViewModel.fetchLast7DaysMindScoresSync()
             updateChartData(chart, scores)
