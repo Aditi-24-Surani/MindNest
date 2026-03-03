@@ -3,11 +3,11 @@ package com.example.mindnest.data.repository
 import com.example.mindnest.data.dao.TaskDao
 import com.example.mindnest.data.entity.TaskEntity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 
 class TaskRepository(private val taskDao: TaskDao) {
 
@@ -38,9 +38,7 @@ class TaskRepository(private val taskDao: TaskDao) {
     }
 
     private fun syncTaskToFirebase(task: TaskEntity) {
-
         val uid = auth.currentUser?.uid ?: return
-
         val taskMap = hashMapOf(
             "id" to task.id,
             "userId" to task.userId,
@@ -50,7 +48,6 @@ class TaskRepository(private val taskDao: TaskDao) {
             "completed" to task.completed,
             "date" to task.date
         )
-
         firestore.collection("users")
             .document(uid)
             .collection("tasks")
@@ -59,9 +56,7 @@ class TaskRepository(private val taskDao: TaskDao) {
     }
 
     private fun deleteFromFirebase(taskId: Long) {
-
         val uid = auth.currentUser?.uid ?: return
-
         firestore.collection("users")
             .document(uid)
             .collection("tasks")
@@ -70,31 +65,33 @@ class TaskRepository(private val taskDao: TaskDao) {
     }
 
     fun startRealtimeSync(userId: Long) {
-
         val uid = auth.currentUser?.uid ?: return
-
         firestore.collection("users")
             .document(uid)
             .collection("tasks")
             .addSnapshotListener { snapshot, _ ->
-
                 if (snapshot == null) return@addSnapshotListener
-
                 CoroutineScope(Dispatchers.IO).launch {
-
-                    for (doc in snapshot.documents) {
-
-                        val task = TaskEntity(
-                            id = doc.getLong("id") ?: 0,
-                            userId = userId,
-                            title = doc.getString("title") ?: "",
-                            description = doc.getString("description") ?: "",
-                            createdAt = doc.getLong("createdAt") ?: System.currentTimeMillis(),
-                            completed = doc.getBoolean("completed") ?: false,
-                            date = doc.getString("date") ?: ""
-                        )
-
-                        taskDao.insertTask(task)
+                    for (change in snapshot.documentChanges) {
+                        val doc = change.document
+                        val id = doc.getLong("id") ?: 0L
+                        when (change.type) {
+                            DocumentChange.Type.ADDED, DocumentChange.Type.MODIFIED -> {
+                                val task = TaskEntity(
+                                    id = id,
+                                    userId = userId,
+                                    title = doc.getString("title") ?: "",
+                                    description = doc.getString("description") ?: "",
+                                    createdAt = doc.getLong("createdAt") ?: System.currentTimeMillis(),
+                                    completed = doc.getBoolean("completed") ?: false,
+                                    date = doc.getString("date") ?: ""
+                                )
+                                taskDao.insertTask(task)
+                            }
+                            DocumentChange.Type.REMOVED -> {
+                                taskDao.deleteTaskById(id)
+                            }
+                        }
                     }
                 }
             }

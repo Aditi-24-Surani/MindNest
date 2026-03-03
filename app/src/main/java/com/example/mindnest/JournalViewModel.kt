@@ -15,6 +15,7 @@ import java.util.Date
 import java.util.Locale
 
 class JournalViewModel(application: Application) : AndroidViewModel(application) {
+
     private val app = application as MindNestApplication
     private val preferenceManager = PreferenceManager(application)
 
@@ -22,7 +23,6 @@ class JournalViewModel(application: Application) : AndroidViewModel(application)
     val allJournals: LiveData<List<JournalEntry>> = _allJournals
 
     init {
-
         val userId = preferenceManager.getUserId()
 
         if (userId > 0) {
@@ -46,22 +46,31 @@ class JournalViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch {
             app.journalRepository.getJournalEntriesByUser(userId)
                 .map { entities ->
-                    entities.map { entity ->
-                        val day = SimpleDateFormat("dd", Locale.getDefault()).format(parseDate(entity.date))
-                        val weekday = SimpleDateFormat("EEE", Locale.getDefault()).format(parseDate(entity.date))
-                        val monthYear = SimpleDateFormat("MMM yyyy", Locale.getDefault())
-                            .format(parseDate(entity.date))
-                            .uppercase()
 
-                        JournalEntry(
-                            id = entity.id,
-                            day = day,
-                            weekday = weekday,
-                            text = entity.content,
-                            monthYear = monthYear,
-                            mood = entity.mood
-                        )
-                    }
+                    entities.sortedByDescending { it.id }
+                        .map { entity ->
+
+                            val parsedDate = parseDate(entity.date)
+
+                            val day = SimpleDateFormat("dd", Locale.getDefault())
+                                .format(parsedDate)
+
+                            val weekday = SimpleDateFormat("EEE", Locale.getDefault())
+                                .format(parsedDate)
+
+                            val monthYear = SimpleDateFormat("MMM yyyy", Locale.getDefault())
+                                .format(parsedDate)
+                                .uppercase()
+
+                            JournalEntry(
+                                id = entity.id,
+                                day = day,
+                                weekday = weekday,
+                                text = entity.content,
+                                monthYear = monthYear,
+                                mood = entity.mood
+                            )
+                        }
                 }
                 .collect { list ->
                     _allJournals.value = list
@@ -69,11 +78,13 @@ class JournalViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+
     fun addJournal(entry: JournalEntry) {
         val userId = preferenceManager.getUserId()
         if (userId <= 0) return
 
         val date = SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(Date())
+
         viewModelScope.launch {
             val entity = JournalEntity(
                 id = 0,
@@ -82,6 +93,7 @@ class JournalViewModel(application: Application) : AndroidViewModel(application)
                 mood = entry.mood,
                 date = date
             )
+
             app.journalRepository.insertJournalEntry(entity)
         }
     }
@@ -91,6 +103,7 @@ class JournalViewModel(application: Application) : AndroidViewModel(application)
         if (userId <= 0 || entry.id == 0L) return
 
         val date = SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(Date())
+
         viewModelScope.launch {
             val entity = JournalEntity(
                 id = entry.id,
@@ -99,6 +112,7 @@ class JournalViewModel(application: Application) : AndroidViewModel(application)
                 mood = entry.mood,
                 date = date
             )
+
             app.journalRepository.updateJournalEntry(entity)
         }
     }
@@ -109,4 +123,3 @@ class JournalViewModel(application: Application) : AndroidViewModel(application)
         }.getOrNull() ?: Date()
     }
 }
-
