@@ -90,7 +90,7 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
 
             startRealtimeSync()
             startObservingModules()
-            startObservingMindScore()
+            startObservingMindScore() // Start observing mind score flow
             refreshMeditation()
             refreshMindScore()
             startWeeklyObserver(userId)
@@ -98,32 +98,33 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
     }
 
     private suspend fun initUserId() {
+        val userId = preferenceManager.getUserId()
+        val localName = preferenceManager.getUserName()
 
-        if (preferenceManager.getUserId() > 0) {
-            val localName = preferenceManager.getUserName()
-            if (!localName.isNullOrEmpty()) {
-                _userName.postValue(localName!!)
-            }
+        // 1. Priority: If we have a local name, use it immediately to avoid 'null' greeting
+        if (userId > 0 && !localName.isNullOrEmpty()) {
+            _userName.postValue(localName)
+            return
         }
 
+        // 2. Secondary: If name is missing locally, fetch it from the Database using email
         val email = preferenceManager.getUserEmail()
         if (!email.isNullOrEmpty()) {
-
             val user = app.userRepository.getUserByEmail(email)
-
             if (user != null) {
+                // Sync local preferences with database values
                 preferenceManager.saveUserId(user.id)
                 preferenceManager.saveUserName(user.name)
                 preferenceManager.saveUserEmail(user.email)
                 preferenceManager.saveUserGender(user.gender)
 
                 _userName.postValue(user.name)
-            } else {
-                _userName.postValue("User")
+                return
             }
-        } else {
-            _userName.postValue("User")
         }
+
+        // 3. Fallback: If no user is found, default to "User"
+        _userName.postValue("User")
     }
 
     private fun generateWeeklyInsight(avg: Int, daysTracked: Int): String {
@@ -192,8 +193,9 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
                 val today = todayDateString()
                 val targetMl = settings?.waterTargetMl ?: 2000
                 val todayMl = entries.filter { it.date == today }.sumOf { it.amountMl }
-
-                refreshMindScore()
+                
+                // Recalculate score when water changes from cloud
+                refreshMindScore() 
 
                 if (targetMl <= 0) return@combine "Set target"
                 "$todayMl / $targetMl ml"
